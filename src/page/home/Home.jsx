@@ -336,7 +336,7 @@ export default function Home() {
                 </NativeSelect>
               </FormControl>
             </Box>
-            <Link to="/booking">
+            <Link to="/booking/seats">
               <button onClick={saveDTStoLocalStorage}>ĐẶT VÉ</button>
             </Link>
           </div>
@@ -358,7 +358,6 @@ export default function Home() {
               cao tốc Bạch Đằng (Q1) - Bình Dương - Củ Chi
             </div>
           </div>
-
           <div className="divider"></div>
           <div className="my-policy">
             <h2>Chính sách giá vé của chúng tôi</h2>

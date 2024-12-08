@@ -7,23 +7,37 @@ import FooterComponent from "./components/Footer/FooterComponent.jsx";
 import { Layout } from "antd";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Content } from "antd/es/layout/layout.js";
-
+import Err from "./page/error/Err.jsx";
+import Booking from "./page/booking/Booking.jsx";
+import Login from "./page/login/login.jsx";
+import Signup from "./page/signup/signup.jsx";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute.js";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Layout style={{backgroundColor:"#FFF"}}>
-        <HeaderComponent></HeaderComponent>
-        <Content>
-          <Routes>
-            <Route path="/" element={<Home />}></Route>
+<BrowserRouter>
+  <Layout style={{ backgroundColor: "#FFF" }}>
+    <HeaderComponent />
+    <Content>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route 
+          path="/booking/seats" 
+          element={
+            <ProtectedRoute>
+              <Booking />
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Err />} />
+      </Routes>
+    </Content>
+    <FooterComponent />
+  </Layout>
+</BrowserRouter>
 
-          </Routes>
-        </Content>
-
-        <FooterComponent></FooterComponent>
-      </Layout>
-    </BrowserRouter>
   );
 }
 
