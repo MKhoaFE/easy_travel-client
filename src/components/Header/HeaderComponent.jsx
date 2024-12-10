@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../Header/header.css";
 import "@fontsource/roboto/700.css";
 import EmailIcon from "@mui/icons-material/Email";
@@ -16,8 +16,69 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import logo_header from "../../assets/logo-image.png";
 import english from "../../assets/english.png";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { AuthContext } from "../../context/Auth.context";
 function HeaderComponent() {
+  const [userName, setUserName] = useState("");
+  const { isAuthenticated, logout } = useContext(AuthContext);
+  const [currentUserName, setCurrentUserName] = useState(userName);
 
+  useEffect(() => {
+    setCurrentUserName(userName);
+  }, [userName]);
+  // Hàm cập nhật user từ cookie
+  const updateUserNameFromCookie = () => {
+    const userCookie = Cookies.get("user");
+    if (userCookie) {
+      const user = JSON.parse(userCookie);
+      setUserName(user.name);
+    } else {
+      setUserName("");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      // Gọi API logout
+      const token = Cookies.get("token"); // Lấy token từ cookie
+      await axios.post(
+        "http://localhost:5000/api/users/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Xóa cookie sau khi đăng xuất
+      Cookies.remove("user");
+      Cookies.remove("token");
+      logout(); 
+      setUserName("");
+
+    } catch (error) {
+      console.error("Lỗi khi đăng xuất:", error);
+      alert("Đăng xuất thất bại!");
+    }
+  };
+
+  useEffect(() => {
+    const userCookie = Cookies.get("user");
+    // Lấy tên user khi component được mount
+    updateUserNameFromCookie();
+
+    // Lắng nghe sự thay đổi trên sự kiện window để cập nhật user
+    window.addEventListener("cookieChange", updateUserNameFromCookie);
+    if (userCookie) {
+      const user = JSON.parse(userCookie);
+      setUserName(user.name); // Hiển thị tên từ thông tin người dùng trong cookie
+    }
+    return () => {
+      window.removeEventListener("cookieChange", updateUserNameFromCookie);
+    };
+  }, []);
   return (
     <div className="navbar roboto-medium">
       <div className="top">
@@ -42,7 +103,18 @@ function HeaderComponent() {
               </span>
               <img src={logo1} alt="" />
               <img src={logo2} alt="" />
-
+  
+              {isAuthenticated ? (
+                <>
+                  <strong>Xin chào, {currentUserName}</strong>{" "}
+                  <button
+                    onClick={handleLogout}
+                    style={{ background: "none", color: "white" }}
+                  >
+                    logout
+                  </button>
+                </>
+              ) : (
                 <Link to="/login" style={{ textDecoration: "none" }}>
                   <Button
                     style={{
@@ -54,7 +126,7 @@ function HeaderComponent() {
                     Đăng nhập
                   </Button>
                 </Link>
-              
+              )}
             </div>
           </div>
         </div>
@@ -102,7 +174,7 @@ function HeaderComponent() {
                 <Nav.Link href="#action3">TÌM KIẾM VÉ</Nav.Link>
               </Nav>
             </Navbar.Collapse>
-            <Form className="d-flex">
+            <Form className="d-block">
               <Button
                 variant="outline-success"
                 style={{
@@ -114,6 +186,9 @@ function HeaderComponent() {
               >
                 <img src={english} alt="" />
               </Button>
+              <div className="responsive-hide-loginbtn">
+                <Link to="/login">Đăng nhập</Link>
+              </div>
             </Form>
           </Navbar>
         </div>
