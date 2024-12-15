@@ -9,8 +9,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Content } from "antd/es/layout/layout.js";
 import Err from "./page/error/Err.jsx";
 import Booking from "./page/booking/Booking.jsx";
+import Passengers from "./page/passengers/passengers.jsx";
 import Login from "./page/login/login.jsx";
 import Signup from "./page/signup/signup.jsx";
+import Payment from "./page/payment/payment.jsx";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute.js";
 
 function App() {
@@ -26,6 +28,22 @@ function App() {
           element={
             <ProtectedRoute>
               <Booking />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/booking/passengers" 
+          element={
+            <ProtectedRoute>
+              <Passengers />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/booking/payment" 
+          element={
+            <ProtectedRoute>
+              <Payment />
             </ProtectedRoute>
           } 
         />

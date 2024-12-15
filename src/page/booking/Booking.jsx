@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../booking/booking.css";
 import "../../GlobalStyles/glbStyles.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "font-awesome/css/font-awesome.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -255,6 +255,37 @@ const Booking = () => {
 
     fetchData();
   }, []);
+
+
+  useEffect(() => {
+    // Update `currentPriceInfor` based on selected seats
+    const seats = key === "8:00" ? selectedSeats8AM : selectedSeats12AM;
+    if (seats) {
+      const newSpecialRemaining = currentPriceInfor.special.quantity - Object.keys(seats).filter(s => seats[s] === "special").length;
+      const newRegularRemaining = currentPriceInfor.regular.quantity - Object.keys(seats).filter(s => seats[s] === "regular").length;
+
+      setPriceInfor(prev => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          special: {
+            ...prev[key].special,
+            remaining: newSpecialRemaining
+          },
+          regular: {
+            ...prev[key].regular,
+            remaining: newRegularRemaining
+          }
+        }
+      }));
+    }
+  }, [selectedSeats8AM, selectedSeats12AM, key]);
+  
+  useEffect(() => {
+    localStorage.setItem('selectedSeats8AM', JSON.stringify(selectedSeats8AM));
+    localStorage.setItem('selectedSeats12AM', JSON.stringify(selectedSeats12AM));
+  }, [selectedSeats8AM, selectedSeats12AM]);
+
 
   return (
     <>
